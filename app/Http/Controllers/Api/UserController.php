@@ -69,16 +69,13 @@ class UserController extends Controller
 
     public function checkUser(Request $request){
 
-       // $user = DB::select('select * from users where email = ? AND password = ?', [$request->email, $request->password]);
+       //$user = DB::select('select * from users where email = ? AND password = ?', [$request->email, $request->password]);
         $user = DB::table('users')
             ->where([
                 ['email', $request->email],
                 ['password', $request->password]
            ])->get();
-
-                  
-
-
-         return $user;
+           
+        return $user;
     }
 }

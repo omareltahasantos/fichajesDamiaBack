@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\HoursController;
+use App\Http\Controllers\Api\CampaignUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,6 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/user/{id}', 'show');
     Route::put('/user/{id}', 'update');
     Route::delete('/user/{id}', 'destroy');
-
     Route::get('/checkuser', 'checkUser');
 
 });
@@ -42,7 +42,20 @@ Route::controller(CampaignController::class)->group(function(){
     Route::get('/campaign/{id}', 'show');
     Route::put('/campaign/{id}', 'update');
     Route::delete('/campaign/{id}', 'destroy');
+    Route::get('/activecampaigns', 'active');
+    Route::get('/searchCampaign', 'search');
 
+});
+
+Route::controller(CampaignUserController::class)->group(function(){
+
+    Route::get('/campaignsUsers', 'index');
+    Route::get('/campaignUser', 'store');
+    Route::get('/campaignUser/{id}', 'show');
+    Route::put('/campaignUser/{id}', 'update');
+    Route::delete('/campaignUser/{id}', 'destroy');
+    Route::get('/participatingUsers', 'participatingUsers');
+    Route::get('/checkIfUserCampaignExists', 'checkIfUserCampaignExists');
 });
 
 

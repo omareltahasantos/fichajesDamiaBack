@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
+use Illuminate\Support\Facades\DB;
 
 class CampaignController extends Controller
 {
@@ -29,6 +30,8 @@ class CampaignController extends Controller
 
         $campaign->save();
 
+        return $campaign->id;
+
     }
 
    
@@ -52,7 +55,7 @@ class CampaignController extends Controller
 
         $campaign->save();
 
-        return $campaign;
+        return $campaign->id;
 
     }
 
@@ -63,4 +66,23 @@ class CampaignController extends Controller
         
         return $id;
     }
+
+    public function active(Request $request) //campañas en activo
+    {
+
+        $campaigns = 
+            DB::select('select * from campaigns where date_end >= ?', [$request->current_date]);
+
+        return $campaigns;
+    }
+
+
+    public function search(Request $request)
+    {
+        $campaigns = DB::select('select * from campaigns where name LIKE ?', ['%'.$request->keyword.'%']);
+        
+        return $campaigns;
+    }
+
+    
 }
