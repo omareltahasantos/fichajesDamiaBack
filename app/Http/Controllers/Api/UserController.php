@@ -46,11 +46,11 @@ class UserController extends Controller
     
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($request->id);
+        $user = User::findOrFail($id);
 
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = $request->password;
+        //$user->password = $request->password;
         $user->hours_contract = $request->hours_contract;
         $user->rol = $request->rol;
         $user->date_start = $request->date_start;
