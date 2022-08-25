@@ -31,6 +31,9 @@ Route::controller(UserController::class)->group(function(){
     Route::put('/user/{id}', 'update');
     Route::delete('/user/{id}', 'destroy');
     Route::get('/checkuser', 'checkUser');
+    Route::get('/contractedHours', 'contractedHours');
+    Route::get('/searchUser', 'search');
+    Route::get('/rolesUser', 'roles');
 
 });
 
@@ -45,6 +48,7 @@ Route::controller(CampaignController::class)->group(function(){
     Route::get('/activecampaigns', 'active');
     Route::get('/searchCampaign', 'search');
 
+
 });
 
 Route::controller(CampaignUserController::class)->group(function(){
@@ -56,6 +60,8 @@ Route::controller(CampaignUserController::class)->group(function(){
     Route::delete('/campaignUser/{id}', 'destroy');
     Route::get('/participatingUsers', 'participatingUsers');
     Route::get('/checkIfUserCampaignExists', 'checkIfUserCampaignExists');
+    Route::get('/campaigns_current_user', 'campaignByUser');
+
 });
 
 
@@ -66,7 +72,12 @@ Route::controller(HoursController::class)->group(function(){
     Route::get('/hour', 'store');
     Route::get('/hour/{id}', 'show');
     Route::put('/hour/{id}', 'update');
+    Route::get('/updateWork', 'updateWork');
     Route::delete('/hour/{id}', 'destroy');
+    Route::get('/validateHours', 'validateHours');
+    Route::get('/insertedHours', 'insertedHours');
+    Route::get('/searchHours', 'search');
+    Route::get('/hoursByCampaign', 'hoursByCampaign');
 
 });
 

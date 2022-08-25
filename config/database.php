@@ -46,14 +46,14 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => env('DB_HOST', 'eu-cdbr-west-03.cleardb.net'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
+            'database' => env('DB_DATABASE', 'heroku_a70d6fb1cb3947a'),
+            'username' => env('DB_USERNAME', 'b241d1e0b0fa48'),
+            'password' => env('DB_PASSWORD', '52ec55c0'),
+            'unix_socket' => env('DB_SOCKET'),
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
             'strict' => true,
@@ -62,6 +62,7 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+      
 
         'pgsql' => [
             'driver' => 'pgsql',

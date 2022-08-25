@@ -62,4 +62,15 @@ class CampaignUserController extends Controller
          return $cusers;
      }
 
+     public function campaignByUser(Request $request){
+        
+        $campaigns = DB::table('campaigns_users')
+                    ->join('campaigns', 'campaigns.id', '=', 'campaigns_users.campaign_id')
+                    ->select('campaigns.*')
+                    ->where('campaigns_users.user_id', '=', $request->user_id)
+                    ->get();
+
+        return $campaigns;
+    }
+
 }

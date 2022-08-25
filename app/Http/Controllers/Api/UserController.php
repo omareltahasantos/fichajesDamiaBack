@@ -31,6 +31,8 @@ class UserController extends Controller
 
         $user->save();
 
+        return $user->id;
+
     }
 
    
@@ -77,5 +79,25 @@ class UserController extends Controller
            ])->get();
            
         return $user;
+    }
+
+    public function contractedHours(Request $request){
+        $contracted_hours = DB::select('select SUM(hours_contract) as contracted_hours from users');
+
+        return $contracted_hours;
+    }
+
+    public function search(Request $request)
+    {
+        $users = DB::select('select * from users where name LIKE ?', ['%'.$request->keyword.'%']);
+        
+        return $users;
+    }
+
+    public function roles(Request $request)
+    {
+        $roles = DB::select('select DISTINCT(rol) as rol from users order by rol ');
+        
+        return $roles;
     }
 }
