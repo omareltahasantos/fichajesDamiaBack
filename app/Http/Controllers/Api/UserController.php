@@ -9,7 +9,7 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-   
+
     public function index()
     {
         $users = User::all();
@@ -17,7 +17,7 @@ class UserController extends Controller
         return $users;
     }
 
-   
+
     public function store(Request $request)
     {
         $user = new User();
@@ -35,7 +35,7 @@ class UserController extends Controller
 
     }
 
-   
+
     public function show($id)
     {
         $user = User::find($id);
@@ -43,14 +43,14 @@ class UserController extends Controller
         return $user;
     }
 
-    
+
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
 
         $user->name = $request->name;
         $user->email = $request->email;
-        //$user->password = $request->password;
+        $user->password = $request->password;
         $user->hours_contract = $request->hours_contract;
         $user->rol = $request->rol;
         $user->date_start = $request->date_start;
@@ -61,11 +61,11 @@ class UserController extends Controller
 
     }
 
-    
+
     public function destroy($id)
     {
         $user = User::destroy($id);
-        
+
         return $id;
     }
 
@@ -77,7 +77,7 @@ class UserController extends Controller
                 ['email', $request->email],
                 ['password', $request->password]
            ])->get();
-           
+
         return $user;
     }
 
@@ -90,14 +90,14 @@ class UserController extends Controller
     public function search(Request $request)
     {
         $users = DB::select('select * from users where name LIKE ?', ['%'.$request->keyword.'%']);
-        
+
         return $users;
     }
 
     public function roles(Request $request)
     {
         $roles = DB::select('select DISTINCT(rol) as rol from users order by rol ');
-        
+
         return $roles;
     }
 }
