@@ -9,15 +9,22 @@ use Illuminate\Support\Facades\DB;
 
 class CampaignController extends Controller
 {
-   
+
     public function index()
     {
-        $campaigns = Campaign::all();
+        $campaigns = Campaign::offset(0)->limit(10)->get();
 
         return $campaigns;
     }
 
-   
+    public function count()
+    {
+        $campaigns = Campaign::all()->count();
+
+        return $campaigns;
+    }
+
+
     public function store(Request $request)
     {
         $campaign = new Campaign();
@@ -34,7 +41,7 @@ class CampaignController extends Controller
 
     }
 
-   
+
     public function show($id)
     {
         $campaign = Campaign::find($id);
@@ -42,7 +49,7 @@ class CampaignController extends Controller
         return $campaign;
     }
 
-    
+
     public function update(Request $request, $id)
     {
         $campaign = Campaign::findOrFail($request->id);
@@ -59,18 +66,18 @@ class CampaignController extends Controller
 
     }
 
-    
+
     public function destroy($id)
     {
         $campaign = Campaign::destroy($id);
-        
+
         return $id;
     }
 
     public function active(Request $request) //campañas en activo
     {
 
-        $campaigns = 
+        $campaigns =
             DB::select('select * from campaigns where date_end >= ?', [$request->current_date]);
 
         return $campaigns;
@@ -80,9 +87,13 @@ class CampaignController extends Controller
     public function search(Request $request)
     {
         $campaigns = DB::select('select * from campaigns where name LIKE ?', ['%'.$request->keyword.'%']);
-        
+
         return $campaigns;
     }
 
-    
+    public function paginate(Request $request){
+        $campaigns = DB::table('campaigns')->offset($request->offset)->limit($request->limit)->get();
+
+        return $campaigns;
+    }
 }

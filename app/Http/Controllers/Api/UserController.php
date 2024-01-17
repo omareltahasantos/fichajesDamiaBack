@@ -12,7 +12,14 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::all();
+        $users = User::offset(0)->limit(10)->get();
+
+        return $users;
+    }
+
+    public function count()
+    {
+        $users = User::all()->count();
 
         return $users;
     }
@@ -99,5 +106,11 @@ class UserController extends Controller
         $roles = DB::select('select DISTINCT(rol) as rol from users order by rol ');
 
         return $roles;
+    }
+
+    public function paginate(Request $request){
+        $users = DB::table('users')->offset($request->offset)->limit($request->limit)->get();
+
+        return $users;
     }
 }

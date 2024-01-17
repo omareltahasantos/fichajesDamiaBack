@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class HoursController extends Controller
 {
-   
+
     public function index()
     {
         $hours = DB::table('hours')
@@ -18,12 +18,22 @@ class HoursController extends Controller
                 ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
                 ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
                 ->orderBy('hours.validate', 'asc')
+                ->limit(10)
+                ->offset(0)
                 ->get();
 
         return $hours;
     }
 
-   
+    public function count()
+    {
+        $hours = Hours::all()->count();
+
+        return $hours;
+    }
+
+
+
     public function store(Request $request)
     {
         $hour = new Hours();
@@ -46,7 +56,7 @@ class HoursController extends Controller
 
     }
 
-   
+
     public function show($id)
     {
         $hour = Hours::find($id);
@@ -54,7 +64,7 @@ class HoursController extends Controller
         return $hour;
     }
 
-    
+
     public function update(Request $request, $id)
     {
         $hour = Hours::findOrFail($request->id);
@@ -91,11 +101,11 @@ class HoursController extends Controller
     }
 
 
-    
+
     public function destroy($id)
     {
         $hour = Hours::destroy($id);
-        
+
         return $id;
     }
 
@@ -111,8 +121,8 @@ class HoursController extends Controller
                 ->where('validate', 'Si')
                 ->whereBetween('register_start', [$from, $to])
                 ->get()->count();
- 
-        
+
+
         return $hours;
     }
 
@@ -126,8 +136,8 @@ class HoursController extends Controller
         $hours = DB::table('hours')
                 ->whereBetween('register_start', [$from, $to])
                 ->get()->count();
- 
-        
+
+
         return $hours;
     }
 
@@ -140,7 +150,7 @@ class HoursController extends Controller
                 ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
                 ->where('users.name', 'like', '%'.$request->keyword.'%')
                 ->get();
-        
+
         return $hour;
     }
 
@@ -153,8 +163,24 @@ class HoursController extends Controller
                  ->where('hours.campaign_id', '=', $request->campaign_id)
                  ->orderby('hours.register_end', 'asc')
                 ->get();
-        
+
         return $hours;
+    }
+
+    public function paginate(Request $request){
+
+        $hours = DB::table('hours')
+        ->join('users', 'users.id', '=', 'hours.user_id')
+        ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+        ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+        ->orderBy('hours.validate', 'asc')
+        ->offset($request->offset)
+        ->limit($request->limit)
+        ->get();
+
+        return $hours;
+
+
     }
 
 

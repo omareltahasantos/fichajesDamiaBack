@@ -34,6 +34,8 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/contractedHours', 'contractedHours');
     Route::get('/searchUser', 'search');
     Route::get('/rolesUser', 'roles');
+    Route::get('/countUsers', 'count');
+    Route::get('/paginateUsers', 'paginate');
 
 });
 
@@ -41,12 +43,15 @@ Route::controller(UserController::class)->group(function(){
 Route::controller(CampaignController::class)->group(function(){
 
     Route::get('/campaigns', 'index');
+    Route::get('/countCampaigns', 'count');
     Route::get('/campaign', 'store');
     Route::get('/campaign/{id}', 'show');
     Route::put('/campaign/{id}', 'update');
     Route::delete('/campaign/{id}', 'destroy');
     Route::get('/activecampaigns', 'active');
     Route::get('/searchCampaign', 'search');
+    Route::get('/paginateCampaigns', 'paginate');
+
 
 
 });
@@ -78,6 +83,7 @@ Route::controller(HoursController::class)->group(function(){
     Route::get('/insertedHours', 'insertedHours');
     Route::get('/searchHours', 'search');
     Route::get('/hoursByCampaign', 'hoursByCampaign');
+    Route::get('/countHours', 'count');
+    Route::get('/paginateHours', 'paginate');
 
 });
-
