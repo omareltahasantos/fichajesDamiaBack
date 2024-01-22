@@ -17,6 +17,13 @@ class UserController extends Controller
         return $users;
     }
 
+    public function fetch()
+    {
+        $users = User::all();
+
+        return $users;
+    }
+
     public function count()
     {
         $users = User::all()->count();

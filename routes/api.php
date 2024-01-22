@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::controller(UserController::class)->group(function(){
 
     Route::get('/users', 'index');
+    Route::get('/fetchUsers', 'fetch');
     Route::get('/user', 'store');
     Route::get('/user/{id}', 'show');
     Route::put('/user/{id}', 'update');
