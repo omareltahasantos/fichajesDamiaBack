@@ -67,6 +67,7 @@ class HoursController extends Controller
     {
         $hour = Hours::findOrFail($request->id);
         $hour->validate = $request->state;
+        $hour->validate_by = $request->validateBy;
 
         $hour->save();
 
