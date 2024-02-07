@@ -18,8 +18,6 @@ class HoursController extends Controller
                 ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
                 ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
                 ->orderBy('hours.validate', 'asc')
-                ->limit(30)
-                ->offset(0)
                 ->get();
 
         return $hours;
@@ -155,6 +153,25 @@ class HoursController extends Controller
         return $hour;
     }
 
+
+    public function searchByValidate(Request $request){
+
+        $keyword = '';
+
+        if($request->keyword !== null) {
+            $keyword = $request->keyword;
+        }
+
+
+        $hour = DB::table('hours')
+        ->join('users', 'users.id', '=', 'hours.user_id')
+        ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+        ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+        ->where('hours.validate', '=', $keyword)
+        ->get();
+
+        return $hour;
+    }
 
     public function hoursByCampaign(Request $request){
         $hours = DB::table('hours')
