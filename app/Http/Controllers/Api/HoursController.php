@@ -148,7 +148,7 @@ class HoursController extends Controller
 
     public function searchByValidate(Request $request){
 
-        $keyword = '';
+        $keyword = null;
 
         if($request->keyword !== null) {
             $keyword = $request->keyword;
