@@ -18,7 +18,7 @@ class HoursController extends Controller
                 ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
                 ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
                 ->orderBy('hours.validate', 'asc')
-                ->limit(10)
+                ->limit(30)
                 ->offset(0)
                 ->get();
 
@@ -149,6 +149,7 @@ class HoursController extends Controller
                 ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
                 ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
                 ->where('users.name', 'like', '%'.$request->keyword.'%')
+                ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%')
                 ->get();
 
         return $hour;
