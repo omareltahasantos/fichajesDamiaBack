@@ -25,7 +25,13 @@ class HoursController extends Controller
 
     public function count()
     {
-        $hours = Hours::all()->count();
+        //$hours = Hours::all()->count();
+        $hours = DB::table('hours')
+        ->join('users', 'users.id', '=', 'hours.user_id')
+        ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+        ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+        ->orderBy('hours.validate', 'asc')
+        ->count();
 
         return $hours;
     }
