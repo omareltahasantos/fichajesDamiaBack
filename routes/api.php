@@ -30,6 +30,7 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/user', 'store');
     Route::get('/user/{id}', 'show');
     Route::put('/user/{id}', 'update');
+    Route::put('/user/state/{id}', 'updateState');
     Route::delete('/user/{id}', 'destroy');
     Route::get('/checkuser', 'checkUser');
     Route::get('/contractedHours', 'contractedHours');

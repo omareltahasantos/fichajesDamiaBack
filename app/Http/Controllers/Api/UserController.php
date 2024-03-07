@@ -12,14 +12,14 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::offset(0)->limit(10)->get();
+        $users = User::orderBy('name', 'asc')->offset(0)->limit(10)->get();
 
         return $users;
     }
 
     public function fetch()
     {
-        $users = User::all();
+        $users = User::where('estado', 'Alta')->orderBy('name', 'asc')->get();
 
         return $users;
     }
@@ -42,6 +42,22 @@ class UserController extends Controller
         $user->hours_contract = $request->hours_contract;
         $user->rol = $request->rol;
         $user->date_start = $request->date_start;
+        $user->estado = 'Alta';
+
+        $user->save();
+
+        return $user->id;
+
+    }
+
+
+    public function updateState(Request $request, $id)
+    {
+
+        $user = User::findOrFail($id);
+
+
+        $user->estado = $request->state;
 
         $user->save();
 
@@ -103,7 +119,7 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $users = DB::select('select * from users where name LIKE ?', ['%'.$request->keyword.'%']);
+        $users = DB::select('select * from users where name LIKE ? order by users.name asc', ['%'.$request->keyword.'%']);
 
         return $users;
     }
@@ -116,7 +132,7 @@ class UserController extends Controller
     }
 
     public function paginate(Request $request){
-        $users = DB::table('users')->offset($request->offset)->limit($request->limit)->get();
+        $users = DB::table('users')->orderBy('name')->offset($request->offset)->limit($request->limit)->get();
 
         return $users;
     }
