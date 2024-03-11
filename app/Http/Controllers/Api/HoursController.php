@@ -160,12 +160,21 @@ class HoursController extends Controller
         }
 
 
-        $hour = DB::table('hours')
-        ->join('users', 'users.id', '=', 'hours.user_id')
-        ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-        ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-        ->where('hours.validate', '=', $keyword)
-        ->get();
+
+        if($keyword === 'todos') {
+            $hour = DB::table('hours')
+            ->join('users', 'users.id', '=', 'hours.user_id')
+            ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+            ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')->get();
+
+        }else{
+            $hour = DB::table('hours')
+            ->join('users', 'users.id', '=', 'hours.user_id')
+            ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+            ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+            ->where('hours.validate', '=', $keyword)->get();
+
+        }
 
         return $hour;
     }
