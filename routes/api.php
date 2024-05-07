@@ -84,6 +84,7 @@ Route::controller(HoursController::class)->group(function(){
     Route::get('/validateHours', 'validateHours');
     Route::get('/insertedHours', 'insertedHours');
     Route::get('/searchHours', 'search');
+    Route::get('/searchHoursBetweenDates', 'searchHoursBetweenDates');
     Route::get('/searchByValidate', 'searchByValidate');
     Route::get('/hoursByCampaign', 'hoursByCampaign');
     Route::get('/countHours', 'count');
