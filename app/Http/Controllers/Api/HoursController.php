@@ -141,13 +141,53 @@ class HoursController extends Controller
     public function search(Request $request)
     {
         $filter = $request->filter;
+        $firstDate = $request->firstDate;
+        $secondDate = $request->secondDate;
 
 
-        if($filter === 'todos') {
+        if($firstDate !== NULL && $secondDate !== NULL) {
+            $firstDate = Carbon::parse($request->firstDate);
+            $secondDate = Carbon::parse($request->secondDate);
+        }
+
+
+
+        if ($firstDate === NULL || $secondDate === NULL){
+            if($filter === 'todos') {
+                $hour = DB::table('hours')
+                ->join('users', 'users.id', '=', 'hours.user_id')
+                ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+                ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+                ->where(function ($query) use ($request) {
+                    $query->where('users.name', 'like', '%'.$request->keyword.'%')
+                          ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
+                })->orderby('hours.register_start', 'desc')->get();
+
+                return $hour;
+            }
+
+            $hour = DB::table('hours')
+                    ->join('users', 'users.id', '=', 'hours.user_id')
+                    ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+                    ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+                    ->where('hours.validate', '=', $filter)
+                    ->where(function ($query) use ($request) {
+                        $query->where('users.name', 'like', '%'.$request->keyword.'%')
+                              ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
+                    })->orderby('hours.register_start', 'desc')->get();
+
+            return $hour;
+        }
+
+
+
+
+              if($filter === 'todos') {
             $hour = DB::table('hours')
             ->join('users', 'users.id', '=', 'hours.user_id')
             ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
             ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+            ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
             ->where(function ($query) use ($request) {
                 $query->where('users.name', 'like', '%'.$request->keyword.'%')
                       ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
@@ -160,6 +200,7 @@ class HoursController extends Controller
                 ->join('users', 'users.id', '=', 'hours.user_id')
                 ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
                 ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+                ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
                 ->where('hours.validate', '=', $filter)
                 ->where(function ($query) use ($request) {
                     $query->where('users.name', 'like', '%'.$request->keyword.'%')
@@ -167,6 +208,7 @@ class HoursController extends Controller
                 })->orderby('hours.register_start', 'desc')->get();
 
         return $hour;
+
     }
 
 
