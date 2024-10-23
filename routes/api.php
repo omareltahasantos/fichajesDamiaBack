@@ -46,6 +46,8 @@ Route::controller(UserController::class)->group(function(){
 Route::controller(CustomerController::class)->group(function(){
 
     Route::get('/customers', 'index');
+    Route::get('/fetchAllCustomers', 'fetchAllCustomers');
+    Route::get('/fetchCustomersLinkedUser/{userId}', 'fetchCustomersLinkedUser');
     Route::get('/countCustomers', 'count');
     Route::get('/customer', 'store');
     Route::get('/customer/{id}', 'show');

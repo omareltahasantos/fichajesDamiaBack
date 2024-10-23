@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Rules;
 use Illuminate\Support\Facades\DB;
 
 
@@ -15,6 +16,23 @@ class CustomerController extends Controller
     public function index()
     {
         $customers = Customer::orderBy('name', 'desc')->offset(0)->limit(10)->get();
+
+        return $customers;
+    }
+
+    public function fetchAllCustomers()
+    {
+        $customers = Customer::all();
+
+        return $customers;
+    }
+
+    public function fetchCustomersLinkedUser($userId)
+    {
+        $customers = Customer::join('rules', 'customers.id', '=', 'rules.customerId')
+        ->where('rules.userId', $userId) // Asegúrate de usar el nombre correcto de la columna
+        ->select('customers.*') // Selecciona las columnas de customers
+        ->get();
 
         return $customers;
     }
