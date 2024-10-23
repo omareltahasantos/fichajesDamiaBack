@@ -35,7 +35,7 @@ class CustomerController extends Controller
 
         $customer->save();
 
-        return $customers->id;
+        return $customer->id;
 
     }
 
