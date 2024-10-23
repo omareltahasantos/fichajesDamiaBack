@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\HoursController;
 use App\Http\Controllers\Api\CampaignUserController;
+use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\RulesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +40,19 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/rolesUser', 'roles');
     Route::get('/countUsers', 'count');
     Route::get('/paginateUsers', 'paginate');
+
+});
+
+Route::controller(CustomerController::class)->group(function(){
+
+    Route::get('/customers', 'index');
+    Route::get('/countCustomers', 'count');
+    Route::get('/customer', 'store');
+    Route::get('/customer/{id}', 'show');
+    Route::put('/customer/{id}', 'update');
+    Route::delete('/customer/{id}', 'destroy');
+    Route::get('/searchCustomers', 'search');
+    Route::get('/customer/paginate', 'paginate');
 
 });
 
