@@ -9,6 +9,6 @@ class Campaign extends Model
 {
     use HasFactory;
 
-    protected $filliable = ['user_id', 'name', 'description', 'date_start', 'date_end'];
+    protected $filliable = ['user_id', 'customerId', 'name', 'description', 'date_start', 'date_end'];
 
 }
