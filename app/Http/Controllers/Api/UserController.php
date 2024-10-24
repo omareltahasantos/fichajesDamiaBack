@@ -6,13 +6,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Rules;
 
 class UserController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::orderBy('name', 'asc')->offset(0)->limit(10)->get();
+        $customerId = $request->customerId;
+        $users = User::join('rules', 'users.id', '=', 'rules.userId')
+                ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
+                ->select('users.*') // Selecciona las columnas de customers
+                ->orderBy('users.name', 'asc')
+                ->offset(0)
+                ->limit(1)
+                ->get();
 
         return $users;
     }
@@ -24,9 +32,14 @@ class UserController extends Controller
         return $users;
     }
 
-    public function count()
+    public function count(Request $request)
     {
-        $users = User::all()->count();
+
+        $customerId = $request->customerId;
+        $users = User::join('rules', 'users.id', '=', 'rules.userId')
+                ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
+                ->select('users.*') // Selecciona las columnas de customers
+                ->count();
 
         return $users;
     }
@@ -101,7 +114,6 @@ class UserController extends Controller
 
     public function checkUser(Request $request){
 
-       //$user = DB::select('select * from users where email = ? AND password = ?', [$request->email, $request->password]);
         $user = DB::table('users')
             ->where([
                 ['email', $request->email],
@@ -112,14 +124,24 @@ class UserController extends Controller
     }
 
     public function contractedHours(Request $request){
-        $contracted_hours = DB::select('select SUM(hours_contract) as contracted_hours from users');
+        $customerId = $request->customerId;
+
+        $contracted_hours = User::join('rules', 'users.id', '=', 'rules.userId')
+                ->where('rules.customerId', $customerId)
+                ->sum('users.hours_contract');
 
         return $contracted_hours;
+
     }
 
     public function search(Request $request)
     {
-        $users = DB::select('select * from users where name LIKE ? order by users.name asc', ['%'.$request->keyword.'%']);
+        $customerId = $request->customerId;
+        $users = User::join('rules', 'users.id', '=', 'rules.userId')
+                ->where('rules.customerId', $customerId)
+                ->where('users.name', 'like', '%' . $request->keyword . '%')
+                ->orderBy('users.name', 'asc')
+                ->get();
 
         return $users;
     }
@@ -132,7 +154,16 @@ class UserController extends Controller
     }
 
     public function paginate(Request $request){
+        $customerId = $request->customerId;
         $users = DB::table('users')->orderBy('name')->offset($request->offset)->limit($request->limit)->get();
+
+        $users = User::join('rules', 'users.id', '=', 'rules.userId')
+                ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
+                ->select('users.*') // Selecciona las columnas de customers
+                ->orderBy('users.name', 'asc')
+                ->offset($request->offset)
+                ->limit($request->limit)
+                ->get();
 
         return $users;
     }
