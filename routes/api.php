@@ -58,6 +58,15 @@ Route::controller(CustomerController::class)->group(function(){
 
 });
 
+Route::controller(RulesController::class)->group(function(){
+    Route::get('/linkedUserCustomer', 'index');
+    Route::get('/linkUserCustomer', 'store');
+    Route::get('checkIfUserLinkedToCustomer', 'checkIfUserLinkedToCustomer');
+    Route::delete('/destroyLinkUserCustomer/{id}', 'destroy');
+
+
+});
+
 
 Route::controller(CampaignController::class)->group(function(){
 

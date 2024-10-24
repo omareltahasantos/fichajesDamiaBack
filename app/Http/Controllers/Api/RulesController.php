@@ -5,77 +5,73 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Rules;
+use Illuminate\Support\Facades\DB;
 
 class RulesController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customer::orderBy('name', 'asc')->offset(0)->limit(10)->get();
+        $users = Rules::where('userId', $request->userId)->get();
 
-        return $customers;
+        return $users;
+
     }
 
     public function count()
     {
-        $customers = Customer::all()->count();
 
-        return $customers;
     }
+
+    public function checkIfUserLinkedToCustomer(Request $request)
+    {
+        $cuser = DB::select('select * from rules where userId = ? and customerId = ?',
+                [$request->userId, $request->customerId]);
+
+        return $cuser;
+    }
+
 
 
     public function store(Request $request)
     {
-        $customer = new Customer();
 
-        $customer->name = $request->name;
+        $userId = $request->userId;
+        $customerId = $request->customerId;
 
-        $customer->save();
+        $rules = new Rules();
+        $rules->userId = $userId;
+        $rules->customerId = $customerId;
 
-        return $customers->id;
+        $rules->save();
+
+        return $rules->id;
+
 
     }
 
 
     public function show($id)
     {
-        $customer = Customer::find($id);
 
-        return $customer;
     }
 
 
     public function update(Request $request, $id)
     {
-        $customers = Customer::findOrFail($id);
 
-        $customers->name = $request->name;
-
-        $customers->save();
-
-        return $customers;
 
     }
 
 
     public function destroy($id)
     {
-        $customer = Customer::destroy($id);
 
-        return $id;
+        $rules = Rules::destroy($id);
+
+        return $rules;
+
     }
 
 
-    public function search(Request $request)
-    {
-        $customers = DB::select('select * from customers where name LIKE ? order by customers.name asc', ['%'.$request->keyword.'%']);
-
-        return $customers;
-    }
-
-    public function paginate(Request $request){
-        $customers = DB::table('customers')->orderBy('name')->offset($request->offset)->limit($request->limit)->get();
-
-        return $customers;
-    }
 }

@@ -19,7 +19,7 @@ class UserController extends Controller
                 ->select('users.*') // Selecciona las columnas de customers
                 ->orderBy('users.name', 'asc')
                 ->offset(0)
-                ->limit(1)
+                ->limit(10)
                 ->get();
 
         return $users;
@@ -148,14 +148,17 @@ class UserController extends Controller
 
     public function roles(Request $request)
     {
-        $roles = DB::select('select DISTINCT(rol) as rol from users order by rol ');
-
+        $roles = DB::table('users')
+                ->select('rol')
+                ->distinct()
+                ->where('rol', '!=', 'CONTROL')
+                ->orderBy('rol', 'asc')
+                ->get();
         return $roles;
     }
 
     public function paginate(Request $request){
         $customerId = $request->customerId;
-        $users = DB::table('users')->orderBy('name')->offset($request->offset)->limit($request->limit)->get();
 
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
                 ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
