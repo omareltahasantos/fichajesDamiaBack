@@ -29,7 +29,7 @@ class CampaignUserController extends Controller
      */
     public function store(Request $request)
     {
-      
+
         $cuser = new CampaignsUsers();
 
         $cuser->user_id = $request->user_id;
@@ -40,7 +40,13 @@ class CampaignUserController extends Controller
 
         return $cuser->id;
 
-        
+    }
+    public function destroy($id)
+    {
+        $cuser = CampaignsUsers::find($id);
+        $cuser->delete();
+
+        return $id;
     }
 
     public function checkIfUserCampaignExists(Request $request)
@@ -56,14 +62,14 @@ class CampaignUserController extends Controller
         //$user = DB::select('select * from users where email = ? AND password = ?', [$request->email, $request->password]);
          $cusers = DB::table('campaigns_users')
              ->where([
-                 ['campaign_id', $request->campaign_id]
+                 ['campaign_id', $request->campaign_id],
             ])->get();
-            
+
          return $cusers;
      }
 
      public function campaignByUser(Request $request){
-        
+
         $campaigns = DB::table('campaigns_users')
                     ->join('campaigns', 'campaigns.id', '=', 'campaigns_users.campaign_id')
                     ->select('campaigns.*')

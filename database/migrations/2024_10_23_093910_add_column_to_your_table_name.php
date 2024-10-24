@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->integer('customerId');
+            $table->integer('customerId')->nullable();
         });
     }
 
