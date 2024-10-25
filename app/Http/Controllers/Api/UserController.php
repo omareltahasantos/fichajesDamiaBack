@@ -25,11 +25,22 @@ class UserController extends Controller
         return $users;
     }
 
-    public function fetch()
+    public function fetch(Request $request)
     {
-        $users = User::where('estado', 'Alta')->orderBy('name', 'asc')->get();
+        $customerId = $request->customerId;
+        //$users = User::where('estado', 'Alta')->orderBy('name', 'asc')->get();
+
+        $users = User::join('rules', 'users.id', '=', 'rules.userId')
+                ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
+                ->where('users.estado', 'Alta')
+                ->select('users.*') // Selecciona las columnas de customers
+                ->orderBy('users.name', 'asc')
+                ->get();
 
         return $users;
+
+
+        //Sacar todos los usuarios que estén vinculados al cliente y que estén en estado alta
     }
 
     public function count(Request $request)

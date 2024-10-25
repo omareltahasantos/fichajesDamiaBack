@@ -10,16 +10,21 @@ use Illuminate\Support\Facades\DB;
 class CampaignController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $campaigns = Campaign::offset(0)->limit(10)->get();
+
+        $customerId = $request->customerId;
+
+        $campaigns = Campaign::where('customerId' , $customerId)->offset(0)->limit(10)->get();
 
         return $campaigns;
     }
 
-    public function count()
+    public function count(Request $request)
     {
-        $campaigns = Campaign::all()->count();
+        $customerId = $request->customerId;
+
+        $campaigns = Campaign::where('customerId', '=', $customerId)->count();
 
         return $campaigns;
     }
@@ -34,6 +39,7 @@ class CampaignController extends Controller
         $campaign->description = $request->description;
         $campaign->date_start = $request->date_start;
         $campaign->date_end = $request->date_end;
+        $campaign->customerId = $request->customerId;
 
         $campaign->save();
 
@@ -59,6 +65,7 @@ class CampaignController extends Controller
         $campaign->description = $request->description;
         $campaign->date_start = $request->date_start;
         $campaign->date_end = $request->date_end;
+        $campaign->customerId = $request->customerId;
 
         $campaign->save();
 
@@ -77,8 +84,12 @@ class CampaignController extends Controller
     public function active(Request $request) //campañas en activo
     {
 
-        $campaigns =
-            DB::select('select * from campaigns where date_end >= ?', [$request->current_date]);
+        $customerId = $request->customerId;
+        $currentDate = $request->currentDate;
+
+        $campaigns = Campaign::where('date_end', '>=', $currentDate)
+                    ->where('customerId', $customerId)
+                    ->count();
 
         return $campaigns;
     }
@@ -86,13 +97,16 @@ class CampaignController extends Controller
 
     public function search(Request $request)
     {
-        $campaigns = DB::select('select * from campaigns where name LIKE ?', ['%'.$request->keyword.'%']);
+        $customerId = $request->customerId;
+        $campaigns = Campaign::where('name', 'like', '%' . $request->keyword . '%')->where('customerId', $customerId)->get();
 
         return $campaigns;
     }
 
     public function paginate(Request $request){
-        $campaigns = DB::table('campaigns')->offset($request->offset)->limit($request->limit)->get();
+        $customerId = $request->customerId;
+
+        $campaigns = Campaign::where('customerId', $customerId)->offset($request->offset)->limit($request->limit)->get();
 
         return $campaigns;
     }
