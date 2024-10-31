@@ -14,6 +14,11 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $customerId = $request->customerId;
+
+        if($customerId == 0) {
+            $users = User::where('estado', 'Alta')->orderBy('name', 'asc')->get();
+            return $users;
+        }
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
                 ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
                 ->select('users.*') // Selecciona las columnas de customers
@@ -28,14 +33,18 @@ class UserController extends Controller
     public function fetch(Request $request)
     {
         $customerId = $request->customerId;
-        //$users = User::where('estado', 'Alta')->orderBy('name', 'asc')->get();
+
+        if($customerId == 0) {
+            $users = User::where('estado', 'Alta')->orderBy('name', 'asc')->get();
+            return $users;
+        }
 
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
-                ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
-                ->where('users.estado', 'Alta')
-                ->select('users.*') // Selecciona las columnas de customers
-                ->orderBy('users.name', 'asc')
-                ->get();
+        ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
+        ->where('users.estado', 'Alta')
+        ->select('users.*') // Selecciona las columnas de customers
+        ->orderBy('users.name', 'asc')
+        ->get();
 
         return $users;
 
@@ -47,6 +56,12 @@ class UserController extends Controller
     {
 
         $customerId = $request->customerId;
+
+        if($customerId == 0) {
+            $users = User::where('estado', 'Alta')->count();
+            return $users;
+
+        }
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
                 ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
                 ->select('users.*') // Selecciona las columnas de customers
@@ -137,9 +152,14 @@ class UserController extends Controller
     public function contractedHours(Request $request){
         $customerId = $request->customerId;
 
+       if ($customerId == 0) {
+            $contracted_hours = User::where('estado', 'Alta')->sum('hours_contract');
+            return $contracted_hours;
+        }
+
         $contracted_hours = User::join('rules', 'users.id', '=', 'rules.userId')
-                ->where('rules.customerId', $customerId)
-                ->sum('users.hours_contract');
+        ->where('rules.customerId', $customerId)
+        ->sum('users.hours_contract');
 
         return $contracted_hours;
 
@@ -148,11 +168,20 @@ class UserController extends Controller
     public function search(Request $request)
     {
         $customerId = $request->customerId;
+
+        if($customerId == 0) {
+            $users = User::where('name', 'like', '%' . $request->name . '%')
+            ->where('estado', 'Alta')
+            ->orderBy('name', 'asc')
+            ->get();
+            return $users;
+        }
+
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
-                ->where('rules.customerId', $customerId)
-                ->where('users.name', 'like', '%' . $request->keyword . '%')
-                ->orderBy('users.name', 'asc')
-                ->get();
+        ->where('rules.customerId', $customerId)
+        ->where('users.name', 'like', '%' . $request->keyword . '%')
+        ->orderBy('users.name', 'asc')
+        ->get();
 
         return $users;
     }
@@ -171,13 +200,19 @@ class UserController extends Controller
     public function paginate(Request $request){
         $customerId = $request->customerId;
 
+        if($customerId == 0){
+            $users = User::where('estado', 'Alta')->orderBy('name', 'asc')->offset($request->offset)->limit($request->limit)->get();
+            return $users;
+
+        }
+
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
-                ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
-                ->select('users.*') // Selecciona las columnas de customers
-                ->orderBy('users.name', 'asc')
-                ->offset($request->offset)
-                ->limit($request->limit)
-                ->get();
+        ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
+        ->select('users.*') // Selecciona las columnas de customers
+        ->orderBy('users.name', 'asc')
+        ->offset($request->offset)
+        ->limit($request->limit)
+        ->get();
 
         return $users;
     }

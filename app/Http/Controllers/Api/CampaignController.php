@@ -15,7 +15,7 @@ class CampaignController extends Controller
 
         $customerId = $request->customerId;
 
-        $campaigns = Campaign::where('customerId' , $customerId)->offset(0)->limit(10)->get();
+        $campaigns = Campaign::where('customerId' , $customerId)->where('active', 1)->offset(0)->limit(10)->get();
 
         return $campaigns;
     }
@@ -24,7 +24,7 @@ class CampaignController extends Controller
     {
         $customerId = $request->customerId;
 
-        $campaigns = Campaign::where('customerId', '=', $customerId)->count();
+        $campaigns = Campaign::where('customerId', '=', $customerId)->where('active', 1)->count();
 
         return $campaigns;
     }
@@ -73,6 +73,18 @@ class CampaignController extends Controller
 
     }
 
+    public function updateActive(Request $request, $id)
+    {
+        $campaign = Campaign::findOrFail($request->id);
+
+        $campaign->active = $request->active;
+
+        $campaign->save();
+
+        return $campaign->id;
+
+    }
+
 
     public function destroy($id)
     {
@@ -89,6 +101,7 @@ class CampaignController extends Controller
 
         $campaigns = Campaign::where('date_end', '>=', $currentDate)
                     ->where('customerId', $customerId)
+                    ->where('active', 1)
                     ->count();
 
         return $campaigns;
@@ -98,7 +111,7 @@ class CampaignController extends Controller
     public function search(Request $request)
     {
         $customerId = $request->customerId;
-        $campaigns = Campaign::where('name', 'like', '%' . $request->keyword . '%')->where('customerId', $customerId)->get();
+        $campaigns = Campaign::where('name', 'like', '%' . $request->keyword . '%')->where('customerId', $customerId)->where('active', 1)->get();
 
         return $campaigns;
     }
@@ -106,7 +119,7 @@ class CampaignController extends Controller
     public function paginate(Request $request){
         $customerId = $request->customerId;
 
-        $campaigns = Campaign::where('customerId', $customerId)->offset($request->offset)->limit($request->limit)->get();
+        $campaigns = Campaign::where('customerId', $customerId)->where('active', 1)->offset($request->offset)->limit($request->limit)->get();
 
         return $campaigns;
     }

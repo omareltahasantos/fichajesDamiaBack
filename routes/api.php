@@ -49,6 +49,7 @@ Route::controller(CustomerController::class)->group(function(){
     Route::get('/fetchAllCustomers', 'fetchAllCustomers');
     Route::get('/fetchCustomersLinkedUser/{userId}', 'fetchCustomersLinkedUser');
     Route::get('/countCustomers', 'count');
+    Route::put('/updateActiveCustomer/{id}', 'updateActive');
     Route::get('/customer', 'store');
     Route::get('/customer/{id}', 'show');
     Route::put('/customer/{id}', 'update');
@@ -75,6 +76,7 @@ Route::controller(CampaignController::class)->group(function(){
     Route::get('/campaign', 'store');
     Route::get('/campaign/{id}', 'show');
     Route::put('/campaign/{id}', 'update');
+    Route::put('/updateActiveCampaign/{id}', 'updateActive');
     Route::delete('/campaign/{id}', 'destroy');
     Route::get('/activecampaigns', 'active');
     Route::get('/searchCampaign', 'search');

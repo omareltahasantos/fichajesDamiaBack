@@ -15,7 +15,7 @@ class CustomerController extends Controller
 
     public function index()
     {
-        $customers = Customer::orderBy('name', 'desc')->offset(0)->limit(10)->get();
+        $customers = Customer::orderBy('name', 'desc')->where('active', 1)->offset(0)->limit(10)->get();
 
         return $customers;
     }
@@ -32,6 +32,7 @@ class CustomerController extends Controller
         $customers = Customer::join('rules', 'customers.id', '=', 'rules.customerId')
         ->where('rules.userId', $userId) // Asegúrate de usar el nombre correcto de la columna
         ->select('customers.*') // Selecciona las columnas de customers
+        ->where('active', 1)
         ->get();
 
         return $customers;
@@ -39,7 +40,7 @@ class CustomerController extends Controller
 
     public function count()
     {
-        $customers = Customer::all()->count();
+        $customers = Customer::where('active', 1)->count();
 
         return $customers;
     }
@@ -87,17 +88,30 @@ class CustomerController extends Controller
     }
 
 
+    public function updateActive(Request $request, $id)
+    {
+        $customer = Customer::findOrFail($request->id);
+
+        $customer->active = $request->active;
+
+        $customer->save();
+
+        return $customer->id;
+
+    }
+
+
     public function search(Request $request)
     {
 
-
-        $customers = DB::select('select * from customers where name LIKE ? order by customers.name asc', ['%'.$request->keyword.'%']);
+        $customers = Customer::where('name', 'like', '%'.$request->keyword.'%')->where('active', 1)->orderBy('name', 'asc')->get();
 
         return $customers;
     }
 
     public function paginate(Request $request){
-        $customers = DB::table('customers')->orderBy('name')->offset($request->offset)->limit($request->limit)->get();
+
+        $customers = Customer::orderBy('name', 'desc')->where('active', 1)->offset($request->offset)->limit($request->limit)->get();
 
         return $customers;
     }
