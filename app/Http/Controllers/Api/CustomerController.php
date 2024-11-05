@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Rules;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 
 
@@ -48,13 +49,25 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        $customer = new Customer();
+        try{
+                $customer = new Customer();
+                $customer->name = $request->name;
+                $customer->code = $request->code;
 
-        $customer->name = $request->name;
+                $customer->save();
 
-        $customer->save();
+                return response()->json(['message' => 'Customer created successfully'], 201);
 
-        return $customer->id;
+        }catch(QueryException $e){
+              if ($e->errorInfo[1] == 1062) {  // 1062 es el código de error para "duplicate entry" en MySQL
+                return response()->json(['message' => 'The email has already been taken.'], 400);
+            }
+
+            return response()->json(['message' => 'Something went wrong'], 500);
+
+
+
+        }
 
     }
 
@@ -69,13 +82,26 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
-        $customers = Customer::findOrFail($id);
 
-        $customers->name = $request->name;
+        try{
+            $customer = Customer::findOrFail($id);
 
-        $customers->save();
+            $customer->name = $request->name;
+            $customer->code = $request->code;
 
-        return $customers;
+
+            $customer->save();
+
+            return response()->json(['message' => 'Customer updated successfully'], 201);
+        }catch(QueryException $e){
+            if ($e->errorInfo[1] == 1062) {  // 1062 es el código de error para "duplicate entry" en MySQL
+                return response()->json(['message' => 'The email has already been taken.'], 400);
+            }
+
+            return response()->json(['message' => 'Something went wrong'], 500);
+        }
+
+        return $customer;
 
     }
 

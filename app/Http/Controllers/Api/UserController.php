@@ -76,6 +76,7 @@ class UserController extends Controller
         $user = new User();
 
         $user->name = $request->name;
+        $user->dni = $request->dni;
         $user->email = $request->email;
         $user->password = $request->password;
         $user->hours_contract = $request->hours_contract;
@@ -118,6 +119,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $user->name = $request->name;
+        $user->dni = $request->dni;
         $user->email = $request->email;
         $user->password = $request->password;
         $user->hours_contract = $request->hours_contract;
@@ -140,11 +142,9 @@ class UserController extends Controller
 
     public function checkUser(Request $request){
 
-        $user = DB::table('users')
-            ->where([
-                ['email', $request->email],
-                ['password', $request->password]
-           ])->get();
+
+
+        $user = User::where('dni', $request->dni)->where('password', $request->password)->first();
 
         return $user;
     }
@@ -170,16 +170,22 @@ class UserController extends Controller
         $customerId = $request->customerId;
 
         if($customerId == 0) {
-            $users = User::where('name', 'like', '%' . $request->name . '%')
+            $users = User::where('name', 'like', '%' . $request->keyword . '%')
+            ->orWhere('users.dni', 'like', '%' . $request->keyword . '%')
             ->where('estado', 'Alta')
             ->orderBy('name', 'asc')
+            ->distinct('users.dni')
             ->get();
             return $users;
         }
-
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
         ->where('rules.customerId', $customerId)
-        ->where('users.name', 'like', '%' . $request->keyword . '%')
+        ->where(function($query) use ($request) {
+            $query->where('users.name', 'like', '%' . $request->keyword . '%')
+                  ->orWhere('users.dni', 'like', '%' . $request->keyword . '%');
+        })
+        ->groupBy('users.id', 'users.name', 'users.dni') // Group by user-related fields
+        ->select('users.*', \DB::raw('MAX(rules.id) as rule_id')) // Aggregate rules.id
         ->orderBy('users.name', 'asc')
         ->get();
 
