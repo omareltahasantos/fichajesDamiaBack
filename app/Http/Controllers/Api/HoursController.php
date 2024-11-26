@@ -169,6 +169,7 @@ class HoursController extends Controller
                     ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
                     ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
                     ->where('rules.customerId', '=', $customerId)
+                    ->where('campaigns.customerId', '=', $customerId)
                     ->where(function ($query) use ($request) {
                         $query->where('users.name', 'like', '%'.$request->keyword.'%')
                               ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
@@ -182,6 +183,7 @@ class HoursController extends Controller
                 ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
                 ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
                 ->where('rules.customerId', '=', $customerId)
+                ->where('campaigns.customerId', '=', $customerId)
                 ->where('hours.validate', '=', $filter)
                 ->where(function ($query) use ($request) {
                     $query->where('users.name', 'like', '%'.$request->keyword.'%')
@@ -200,6 +202,7 @@ class HoursController extends Controller
                     ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
                     ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
                     ->where('rules.customerId', '=', $customerId)
+                    ->where('campaigns.customerId', '=', $customerId)
                     ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
                     ->where(function ($query) use ($request) {
                         $query->where('users.name', 'like', '%'.$request->keyword.'%')
@@ -213,6 +216,7 @@ class HoursController extends Controller
             ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
             ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
             ->where('rules.customerId', '=', $customerId)
+            ->where('campaigns.customerId', '=', $customerId)
             ->where('hours.validate', '=', $filter)
             ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
             ->where(function ($query) use ($request) {
