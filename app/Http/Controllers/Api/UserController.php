@@ -16,13 +16,13 @@ class UserController extends Controller
         $customerId = $request->customerId;
 
         if($customerId == 0) {
-            $users = User::where('estado', 'Alta')->orderBy('name', 'asc')->get();
+            $users = User::orderBy('estado', 'asc')->offset(0)->limit(10)->get();
             return $users;
         }
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
                 ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
                 ->select('users.*') // Selecciona las columnas de customers
-                ->orderBy('users.name', 'asc')
+                ->orderBy('users.estado', 'asc')
                 ->offset(0)
                 ->limit(10)
                 ->get();
@@ -35,7 +35,7 @@ class UserController extends Controller
         $customerId = $request->customerId;
 
         if($customerId == 0) {
-            $users = User::where('estado', 'Alta')->orderBy('name', 'asc')->get();
+            $users = User::orderBy('estado', 'asc')->get();
             return $users;
         }
 
@@ -43,7 +43,7 @@ class UserController extends Controller
         ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
         ->where('users.estado', 'Alta')
         ->select('users.*') // Selecciona las columnas de customers
-        ->orderBy('users.name', 'asc')
+        ->orderBy('users.estado', 'asc')
         ->get();
 
         return $users;
@@ -58,7 +58,7 @@ class UserController extends Controller
         $customerId = $request->customerId;
 
         if($customerId == 0) {
-            $users = User::where('estado', 'Alta')->count();
+            $users = User::count();
             return $users;
 
         }
@@ -153,7 +153,7 @@ class UserController extends Controller
         $customerId = $request->customerId;
 
        if ($customerId == 0) {
-            $contracted_hours = User::where('estado', 'Alta')->sum('hours_contract');
+            $contracted_hours = User::sum('hours_contract');
             return $contracted_hours;
         }
 
@@ -172,8 +172,7 @@ class UserController extends Controller
         if($customerId == 0) {
             $users = User::where('name', 'like', '%' . $request->keyword . '%')
             ->orWhere('users.dni', 'like', '%' . $request->keyword . '%')
-            ->where('estado', 'Alta')
-            ->orderBy('name', 'asc')
+            ->orderBy('estado', 'asc')
             ->distinct('users.dni')
             ->get();
             return $users;
@@ -186,7 +185,7 @@ class UserController extends Controller
         })
         ->groupBy('users.id', 'users.name', 'users.dni') // Group by user-related fields
         ->select('users.*', \DB::raw('MAX(rules.id) as rule_id')) // Aggregate rules.id
-        ->orderBy('users.name', 'asc')
+        ->orderBy('users.estado', 'asc')
         ->get();
 
         return $users;
@@ -207,7 +206,7 @@ class UserController extends Controller
         $customerId = $request->customerId;
 
         if($customerId == 0){
-            $users = User::where('estado', 'Alta')->orderBy('name', 'asc')->offset($request->offset)->limit($request->limit)->get();
+            $users = User::orderBy('estado', 'asc')->offset($request->offset)->limit($request->limit)->get();
             return $users;
 
         }
@@ -215,7 +214,7 @@ class UserController extends Controller
         $users = User::join('rules', 'users.id', '=', 'rules.userId')
         ->where('rules.customerId', $customerId) // Asegúrate de usar el nombre correcto de la columna
         ->select('users.*') // Selecciona las columnas de customers
-        ->orderBy('users.name', 'asc')
+        ->orderBy('users.estado', 'asc')
         ->offset($request->offset)
         ->limit($request->limit)
         ->get();
