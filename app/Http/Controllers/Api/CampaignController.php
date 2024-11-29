@@ -14,6 +14,11 @@ class CampaignController extends Controller
     {
 
         $customerId = $request->customerId;
+        $rol = $request->rol;
+
+        if($rol === 'CONTROL' || $rol === 'ADMIN' || $rol === 'COORDINADOR'){
+           return Campaign::where('customerId', $customerId)->offset(0)->limit(10)->get();
+        }
 
         $campaigns = Campaign::where('customerId' , $customerId)->where('active', 1)->offset(0)->limit(10)->get();
 
@@ -23,9 +28,13 @@ class CampaignController extends Controller
     public function count(Request $request)
     {
         $customerId = $request->customerId;
+        $rol = $request->rol;
 
-        $campaigns = Campaign::where('customerId', '=', $customerId)->where('active', 1)->count();
 
+        if($rol === 'CONTROL' || $rol === 'ADMIN' || $rol === 'COORDINADOR'){
+            return Campaign::where('customerId', $customerId)->count();
+        }
+        $campaigns = Campaign::where('customerId' , $customerId)->where('active', 1)->count();
         return $campaigns;
     }
 
@@ -111,15 +120,27 @@ class CampaignController extends Controller
     public function search(Request $request)
     {
         $customerId = $request->customerId;
-        $campaigns = Campaign::where('name', 'like', '%' . $request->keyword . '%')->where('customerId', $customerId)->where('active', 1)->get();
+        $rol = $request->rol;
+
+        if($rol === 'CONTROL' || $rol === 'ADMIN' || $rol === 'COORDINADOR'){
+            return Campaign::where('customerId', $customerId)->where('name', 'like', '%' . $request->keyword . '%')->offset(0)->limit(10)->get();
+        }
+
+        $campaigns = Campaign::where('customerId' , $customerId)->where('active', 1)->where('name', 'like', '%' . $request->keyword . '%')->offset(0)->limit(10)->get();
 
         return $campaigns;
     }
 
     public function paginate(Request $request){
         $customerId = $request->customerId;
+        $rol = $request->rol;
 
-        $campaigns = Campaign::where('customerId', $customerId)->where('active', 1)->offset($request->offset)->limit($request->limit)->get();
+        if($rol === 'CONTROL' || $rol === 'ADMIN' || $rol === 'COORDINADOR'){
+            return Campaign::where('customerId', $customerId)->offset($request->offset)->limit($request->limit)->get();
+        }
+
+        $campaigns = Campaign::where('customerId' , $customerId)->where('active', 1)->offset($request->offset)->limit($request->limit)->get();
+
 
         return $campaigns;
     }
