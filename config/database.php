@@ -43,14 +43,15 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
+
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', 'eu-cluster-west-01.k8s.cleardb.net'),
+            'host' => env('DB_HOST', 'gi6kn64hu98hy0b6.chr7pe7iynqr.eu-west-1.rds.amazonaws.com'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'heroku_7a4220846670d58'),
-            'username' => env('DB_USERNAME', 'b74a311c3c3d6f'),
-            'password' => env('DB_PASSWORD', 'a2b6abf8'),
+            'database' => env('DB_DATABASE', 'tlcwg0th26224uzh'),
+            'username' => env('DB_USERNAME', 'y1oimv7jg1jz30w4'),
+            'password' => env('DB_PASSWORD', 'az6i149ao9t88r40'),
             'unix_socket' => env('DB_SOCKET'),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
