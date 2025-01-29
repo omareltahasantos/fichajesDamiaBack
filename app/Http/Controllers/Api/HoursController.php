@@ -242,7 +242,19 @@ class HoursController extends Controller
                               ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
                     })->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
 
-                return $hours;
+
+                    $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
+                    ->join('users', 'users.id', '=', 'hours.user_id')
+                    ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+                    ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+                    ->where('rules.customerId', '=', $customerId)
+                    ->where('campaigns.customerId', '=', $customerId)
+                    ->where(function ($query) use ($request) {
+                        $query->where('users.name', 'like', '%'.$request->keyword.'%')
+                              ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
+                    })->orderby('hours.register_start', 'desc')->get();
+
+                return ['hours' => $hours, 'exportTotal' => $exportTotal];
             }
 
                 $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
@@ -257,7 +269,19 @@ class HoursController extends Controller
                         ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
                 })->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
 
-            return $hours;
+                $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
+                ->join('users', 'users.id', '=', 'hours.user_id')
+                ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+                ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+                ->where('rules.customerId', '=', $customerId)
+                ->where('campaigns.customerId', '=', $customerId)
+                ->where('hours.validate', '=', $filter)
+                ->where(function ($query) use ($request) {
+                    $query->where('users.name', 'like', '%'.$request->keyword.'%')
+                        ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
+                })->orderby('hours.register_start', 'desc')->get();
+
+            return ['hours' => $hours, 'exportTotal' => $exportTotal];
         }
 
 
@@ -275,7 +299,19 @@ class HoursController extends Controller
                         $query->where('users.name', 'like', '%'.$request->keyword.'%')
                               ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
                     })->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
-            return $hours;
+
+                $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
+                ->join('users', 'users.id', '=', 'hours.user_id')
+                ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+                ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+                ->where('rules.customerId', '=', $customerId)
+                ->where('campaigns.customerId', '=', $customerId)
+                ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
+                ->where(function ($query) use ($request) {
+                    $query->where('users.name', 'like', '%'.$request->keyword.'%')
+                            ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
+                })->orderby('hours.register_start', 'desc')->get();
+            return ['hours' => $hours, 'exportTotal' => $exportTotal];
         }
 
         $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
@@ -291,7 +327,20 @@ class HoursController extends Controller
                     ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
             })->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
 
-        return $hours;
+            $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
+            ->join('users', 'users.id', '=', 'hours.user_id')
+            ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+            ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
+            ->where('rules.customerId', '=', $customerId)
+            ->where('campaigns.customerId', '=', $customerId)
+            ->where('hours.validate', '=', $filter)
+            ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
+            ->where(function ($query) use ($request) {
+                $query->where('users.name', 'like', '%'.$request->keyword.'%')
+                    ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
+            })->orderby('hours.register_start', 'desc')->get();
+
+        return ['hours' => $hours, 'exportTotal' => $exportTotal];
 
     }
 
