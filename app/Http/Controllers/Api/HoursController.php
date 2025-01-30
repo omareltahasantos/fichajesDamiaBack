@@ -381,6 +381,7 @@ class HoursController extends Controller
                  ->where('hours.user_id', '=', $request->user_id)
                  ->where('hours.campaign_id', '=', $request->campaign_id)
                  ->orderby('hours.validate', 'asc')
+                 ->orderby('hours.register_end', 'desc')
                 ->get();
 
         return $hours;
