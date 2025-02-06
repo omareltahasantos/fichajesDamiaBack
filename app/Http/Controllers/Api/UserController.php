@@ -113,6 +113,17 @@ class UserController extends Controller
         return $user;
     }
 
+    public function showByDni($dni)
+    {
+        $user = User::where('dni', $dni)->first();
+
+        if($user == null){
+            return 'No existe el usuario';
+        }
+
+        return $user;
+    }
+
 
     public function update(Request $request, $id)
     {

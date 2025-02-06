@@ -31,6 +31,7 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/fetchUsers', 'fetch');
     Route::get('/user', 'store');
     Route::get('/user/{id}', 'show');
+    Route::get('/user/findBy/{dni}', 'showByDni');
     Route::put('/user/{id}', 'update');
     Route::put('/user/state/{id}', 'updateState');
     Route::delete('/user/{id}', 'destroy');
