@@ -49,24 +49,24 @@ class CustomerController extends Controller
 
     public function store(Request $request)
     {
-        try{
-                $customer = new Customer();
-                $customer->name = $request->name;
-                $customer->code = $request->code;
+        try {
 
-                $customer->save();
+            // Crear y guardar el cliente
+            $customer = new Customer();
+            $customer->name = $request->name;
+            $customer->code = $request->code;
+            $customer->save();
 
-                return response()->json(['message' => 'Customer created successfully'], 201);
-
-        }catch(QueryException $e){
-              if ($e->errorInfo[1] == 1062) {  // 1062 es el código de error para "duplicate entry" en MySQL
-                return response()->json(['message' => 'The email has already been taken.'], 400);
+            return response()->json(['message' => 'Customer created successfully'], 201);
+        } catch (QueryException $e) {
+            // Verificar si es un error de clave duplicada (MySQL: código 1062)
+            if ($e->errorInfo[1] == 1062) {
+                return response()->json(['message' => 'The code has already been taken.'], 400);
             }
 
-            return response()->json(['message' => 'Something went wrong'], 500);
-
-
-
+            return response()->json(['message' => 'Database error.'], 500);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Something went wrong.'], 500);
         }
 
     }
@@ -82,23 +82,24 @@ class CustomerController extends Controller
 
     public function update(Request $request, $id)
     {
+        try {
 
-        try{
+            // Crear y guardar el cliente
             $customer = Customer::findOrFail($id);
-
             $customer->name = $request->name;
             $customer->code = $request->code;
-
-
             $customer->save();
 
             return response()->json(['message' => 'Customer updated successfully'], 201);
-        }catch(QueryException $e){
-            if ($e->errorInfo[1] == 1062) {  // 1062 es el código de error para "duplicate entry" en MySQL
-                return response()->json(['message' => 'The email has already been taken.'], 400);
+        } catch (QueryException $e) {
+            // Verificar si es un error de clave duplicada (MySQL: código 1062)
+            if ($e->errorInfo[1] == 1062) {
+                return response()->json(['message' => 'The code has already been taken.'], 400);
             }
 
-            return response()->json(['message' => 'Something went wrong'], 500);
+            return response()->json(['message' => 'Database error.'], 500);
+        } catch (Exception $e) {
+            return response()->json(['message' => 'Something went wrong.'], 500);
         }
 
         return $customer;
