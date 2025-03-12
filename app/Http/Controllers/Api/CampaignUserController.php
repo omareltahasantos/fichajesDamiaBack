@@ -74,6 +74,7 @@ class CampaignUserController extends Controller
                     ->join('campaigns', 'campaigns.id', '=', 'campaigns_users.campaign_id')
                     ->select('campaigns.*')
                     ->where('campaigns_users.user_id', '=', $request->user_id)
+                    ->orderBy('campaigns.date_end', 'desc')
                     ->get();
 
         return $campaigns;

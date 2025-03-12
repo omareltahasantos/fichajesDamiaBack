@@ -76,6 +76,7 @@ class HoursController extends Controller
         $hour = Hours::findOrFail($request->hour_id);
         $hour->register_end = $request->register_end;
         $hour->ubication_end = $request->ubication_end;
+        $hour->type = $request->type_hours;
         $hour->hours = $request->hours;
 
         if ($hour->save()) {
