@@ -131,7 +131,10 @@ class CustomerController extends Controller
     public function search(Request $request)
     {
 
-        $customers = Customer::where('name', 'like', '%'.$request->keyword.'%')->where('active', 1)->orderBy('name', 'asc')->get();
+        $customers = Customer::where(function($query) use ($request) {
+            $query->where('name', 'like', '%'.$request->keyword.'%')
+              ->orWhere('code', 'like', '%'.$request->keyword.'%');
+        })->where('active', 1)->orderBy('name', 'asc')->get();
 
         return $customers;
     }
