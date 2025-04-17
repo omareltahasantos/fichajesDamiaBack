@@ -241,7 +241,7 @@ class HoursController extends Controller
                     ->where(function ($query) use ($request) {
                         $query->where('users.name', 'like', '%'.$request->keyword.'%')
                               ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                    })->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
+                    })->distinct()->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
 
 
                     $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
@@ -253,7 +253,7 @@ class HoursController extends Controller
                     ->where(function ($query) use ($request) {
                         $query->where('users.name', 'like', '%'.$request->keyword.'%')
                               ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                    })->orderby('hours.register_start', 'desc')->get();
+                    })->distinct()->orderby('hours.register_start', 'desc')->get();
 
                 return ['hours' => $hours, 'exportTotal' => $exportTotal];
             }
@@ -268,7 +268,7 @@ class HoursController extends Controller
                 ->where(function ($query) use ($request) {
                     $query->where('users.name', 'like', '%'.$request->keyword.'%')
                         ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                })->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
+                })->distinct()->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
 
                 $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
                 ->join('users', 'users.id', '=', 'hours.user_id')
@@ -280,7 +280,7 @@ class HoursController extends Controller
                 ->where(function ($query) use ($request) {
                     $query->where('users.name', 'like', '%'.$request->keyword.'%')
                         ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                })->orderby('hours.register_start', 'desc')->get();
+                })->distinct()->orderby('hours.register_start', 'desc')->get();
 
             return ['hours' => $hours, 'exportTotal' => $exportTotal];
         }
@@ -299,7 +299,7 @@ class HoursController extends Controller
                     ->where(function ($query) use ($request) {
                         $query->where('users.name', 'like', '%'.$request->keyword.'%')
                               ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                    })->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
+                    })->distinct()->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
 
                 $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
                 ->join('users', 'users.id', '=', 'hours.user_id')
@@ -311,7 +311,7 @@ class HoursController extends Controller
                 ->where(function ($query) use ($request) {
                     $query->where('users.name', 'like', '%'.$request->keyword.'%')
                             ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                })->orderby('hours.register_start', 'desc')->get();
+                })->distinct()->orderby('hours.register_start', 'desc')->get();
             return ['hours' => $hours, 'exportTotal' => $exportTotal];
         }
 
@@ -326,7 +326,7 @@ class HoursController extends Controller
             ->where(function ($query) use ($request) {
                 $query->where('users.name', 'like', '%'.$request->keyword.'%')
                     ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-            })->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
+            })->distinct()->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
 
             $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
             ->join('users', 'users.id', '=', 'hours.user_id')
@@ -339,7 +339,7 @@ class HoursController extends Controller
             ->where(function ($query) use ($request) {
                 $query->where('users.name', 'like', '%'.$request->keyword.'%')
                     ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-            })->orderby('hours.register_start', 'desc')->get();
+            })->distinct()->orderby('hours.register_start', 'desc')->get();
 
         return ['hours' => $hours, 'exportTotal' => $exportTotal];
 
