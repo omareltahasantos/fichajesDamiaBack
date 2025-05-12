@@ -15,14 +15,15 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => ['api/*'],
 
     'allowed_methods' => ['*'],
 
     'allowed_origins' => [
     'https://fichajes-damia-front-5x5w6b09a-omareltahasantos-projects.vercel.app',
     'https://sistemasmedioambientalesfichajes.netlify.app',
-    'http://localhost:3000', // Si estás trabajando en local
+    'http://localhost:3000',
+    'https://localhost:8000'
 ],
 
     'allowed_origins_patterns' => [],
