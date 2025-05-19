@@ -104,11 +104,20 @@ class HoursController extends Controller
         $from = $request->from;
         $to = $request->to;
         $customerId = $request->customerId;
+        $hours = '';
 
-        $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                ->where('rules.customerId', '=', $customerId)
-                ->where('hours.validate', 'Si')
-                ->sum('hours.hours');
+        $fromDate = Carbon::now()->subDays(30)->startOfDay();
+        $toDate = Carbon::now()->endOfDay();
+
+        if($customerId !== null && $customerId !== '' && $customerId !== 'todos') {
+            $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
+                  ->where('rules.customerId', '=', $customerId)
+                  ->whereBetween('hours.register_start', [$fromDate, $toDate]);
+        } else {
+            $hours = Hours::whereBetween('register_start', [$fromDate, $toDate]);
+        }
+
+        $hours = $hours->where('hours.validate', 'Si')->sum('hours.hours');
 
         return $hours;
     }
@@ -120,11 +129,20 @@ class HoursController extends Controller
         $from = $request->from;
         $to = $request->to;
         $customerId = $request->customerId;
+        $hours = '';
 
+        $fromDate = Carbon::now()->subDays(30)->startOfDay();
+        $toDate = Carbon::now()->endOfDay();
 
-        $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                ->where('rules.customerId', '=', $customerId)
-                ->count();
+        if($customerId !== null && $customerId !== '' && $customerId !== 'todos') {
+            $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
+                  ->where('rules.customerId', '=', $customerId)
+                  ->whereBetween('hours.register_start', [$fromDate, $toDate]);
+        } else {
+            $hours = Hours::whereBetween('register_start', [$fromDate, $toDate]);
+        }
+
+        $hours = $hours->distinct()->count();
 
         return $hours;
     }
@@ -133,215 +151,112 @@ class HoursController extends Controller
     {
 
         $filter = $request->filter;
-        $firstDate = $request->firstDate;
-        $secondDate = $request->secondDate;
+        $firstDate = $request->firstDate ? Carbon::parse($request->firstDate) : null;
+        $secondDate = $request->secondDate ? Carbon::parse($request->secondDate) : null;
         $customerId = $request->customerId;
-        $offset = $request->offset;
-        $limit = $request->limit;
-
-        if($firstDate !== NULL && $secondDate !== NULL) {
-            $firstDate = Carbon::parse($request->firstDate);
-            $secondDate = Carbon::parse($request->secondDate);
-        }
+        $offset = $request->offset ?? 0;
+        $limit = $request->limit ?? 10;
+        $keyword = $request->keyword;
 
 
-
-        if ($firstDate === NULL || $secondDate === NULL){
-            if($filter === 'todos') {
-
-                $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                    ->join('users', 'users.id', '=', 'hours.user_id')
-                    ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                    ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                    ->where('rules.customerId', '=', $customerId)
-                    ->where('campaigns.customerId', '=', $customerId)
-                    ->where(function ($query) use ($request) {
-                        $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                              ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                    })->orderby('hours.register_start', 'desc')->count();
-
-                return $hours;
-            }
-
-                $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                ->join('users', 'users.id', '=', 'hours.user_id')
-                ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                ->where('rules.customerId', '=', $customerId)
-                ->where('campaigns.customerId', '=', $customerId)
-                ->where('hours.validate', '=', $filter)
-                ->where(function ($query) use ($request) {
-                    $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                        ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                })->orderby('hours.register_start', 'desc')->count();
-
-            return $hours;
-        }
-
-
-
-
-        if($filter === 'todos') {
-            $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                    ->join('users', 'users.id', '=', 'hours.user_id')
-                    ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                    ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                    ->where('rules.customerId', '=', $customerId)
-                    ->where('campaigns.customerId', '=', $customerId)
-                    ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
-                    ->where(function ($query) use ($request) {
-                        $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                              ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                    })->orderby('hours.register_start', 'desc')->count();
-            return $hours;
-        }
-
-        $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
+        // Base query
+        $hours = Hours::query()
             ->join('users', 'users.id', '=', 'hours.user_id')
             ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-            ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-            ->where('rules.customerId', '=', $customerId)
-            ->where('campaigns.customerId', '=', $customerId)
-            ->where('hours.validate', '=', $filter)
-            ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
-            ->where(function ($query) use ($request) {
-                $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                    ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-            })->orderby('hours.register_start', 'desc')->count();
+            ->select('users.name as user', 'campaigns.name as campaign', 'hours.*');
 
-        return $hours;
+
+             // Si el filtro no es "todos", se añade
+        if ($filter !== 'todos' && $filter !== 'pendientes') {
+            $hours = $hours->where('hours.validate', $filter);
+        }
+
+        if($filter === 'pendientes') {
+            $hours = $hours->where('hours.validate', '');
+        }
+
+        // Si hay fechas, se filtra por rango
+        if ($firstDate && $secondDate) {
+            $hours->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()]);
+        }
+
+        // Si el cliente no es "todos", se agregan joins y condiciones extra
+        if ($customerId !== 'todos') {
+            $hours->join('rules', 'rules.userId', '=', 'hours.user_id')
+                  ->where('rules.customerId', $customerId)
+                  ->where('campaigns.customerId', $customerId);
+        }
+
+        // Filtro por nombre de usuario o campaña
+        if ($keyword) {
+            $hours->where(function ($query) use ($keyword) {
+                $query->where('users.name', 'like', '%' . $keyword . '%')
+                      ->orWhere('campaigns.name', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        $hours->orderBy('hours.register_start', 'desc')->distinct();
+
+
+       return $hours->count();
+
     }
 
 
     public function search(Request $request)
     {
-        $filter = $request->filter;
-        $firstDate = $request->firstDate;
-        $secondDate = $request->secondDate;
-        $customerId = $request->customerId;
-        $offset = $request->offset;
-        $limit = $request->limit;
-
-        if($firstDate !== NULL && $secondDate !== NULL) {
-            $firstDate = Carbon::parse($request->firstDate);
-            $secondDate = Carbon::parse($request->secondDate);
-        }
+            $filter = $request->filter;
+            $firstDate = $request->firstDate ? Carbon::parse($request->firstDate) : null;
+            $secondDate = $request->secondDate ? Carbon::parse($request->secondDate) : null;
+            $customerId = $request->customerId;
+            $offset = $request->offset ?? 0;
+            $limit = $request->limit ?? 10;
+            $keyword = $request->keyword;
 
 
-
-        if ($firstDate === NULL || $secondDate === NULL){
-            if($filter === 'todos') {
-
-                $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                    ->join('users', 'users.id', '=', 'hours.user_id')
-                    ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                    ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                    ->where('rules.customerId', '=', $customerId)
-                    ->where('campaigns.customerId', '=', $customerId)
-                    ->where(function ($query) use ($request) {
-                        $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                              ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                    })->distinct()->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
+            // Base query
+            $hours = Hours::query()
+                ->join('users', 'users.id', '=', 'hours.user_id')
+                ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
+                ->select('users.name as user', 'campaigns.name as campaign', 'hours.*');
 
 
-                    $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                    ->join('users', 'users.id', '=', 'hours.user_id')
-                    ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                    ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                    ->where('rules.customerId', '=', $customerId)
-                    ->where('campaigns.customerId', '=', $customerId)
-                    ->where(function ($query) use ($request) {
-                        $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                              ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                    })->distinct()->orderby('hours.register_start', 'desc')->get();
-
-                return ['hours' => $hours, 'exportTotal' => $exportTotal];
+                 // Si el filtro no es "todos", se añade
+            if ($filter !== 'todos' && $filter !== 'pendientes') {
+                $hours = $hours->where('hours.validate', $filter);
             }
 
-                $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                ->join('users', 'users.id', '=', 'hours.user_id')
-                ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                ->where('rules.customerId', '=', $customerId)
-                ->where('campaigns.customerId', '=', $customerId)
-                ->where('hours.validate', '=', $filter)
-                ->where(function ($query) use ($request) {
-                    $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                        ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                })->distinct()->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
+            if($filter === 'pendientes') {
+                $hours = $hours->where('hours.validate', '');
+            }
 
-                $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                ->join('users', 'users.id', '=', 'hours.user_id')
-                ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                ->where('rules.customerId', '=', $customerId)
-                ->where('campaigns.customerId', '=', $customerId)
-                ->where('hours.validate', '=', $filter)
-                ->where(function ($query) use ($request) {
-                    $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                        ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                })->distinct()->orderby('hours.register_start', 'desc')->get();
+            // Si hay fechas, se filtra por rango
+            if ($firstDate && $secondDate) {
+                $hours->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()]);
+            }
 
-            return ['hours' => $hours, 'exportTotal' => $exportTotal];
-        }
+            // Si el cliente no es "todos", se agregan joins y condiciones extra
+            if ($customerId !== 'todos') {
+                $hours->join('rules', 'rules.userId', '=', 'hours.user_id')
+                      ->where('rules.customerId', $customerId)
+                      ->where('campaigns.customerId', $customerId);
+            }
 
+            // Filtro por nombre de usuario o campaña
+            if ($keyword) {
+                $hours->where(function ($query) use ($keyword) {
+                    $query->where('users.name', 'like', '%' . $keyword . '%')
+                          ->orWhere('campaigns.name', 'like', '%' . $keyword . '%');
+                });
+            }
 
+            $hours->orderBy('hours.register_start', 'desc')->distinct();
 
-
-        if($filter === 'todos') {
-            $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                    ->join('users', 'users.id', '=', 'hours.user_id')
-                    ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                    ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                    ->where('rules.customerId', '=', $customerId)
-                    ->where('campaigns.customerId', '=', $customerId)
-                    ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
-                    ->where(function ($query) use ($request) {
-                        $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                              ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                    })->distinct()->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
-
-                $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-                ->join('users', 'users.id', '=', 'hours.user_id')
-                ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-                ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-                ->where('rules.customerId', '=', $customerId)
-                ->where('campaigns.customerId', '=', $customerId)
-                ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
-                ->where(function ($query) use ($request) {
-                    $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                            ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-                })->distinct()->orderby('hours.register_start', 'desc')->get();
-            return ['hours' => $hours, 'exportTotal' => $exportTotal];
-        }
-
-        $hours = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-            ->join('users', 'users.id', '=', 'hours.user_id')
-            ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-            ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-            ->where('rules.customerId', '=', $customerId)
-            ->where('campaigns.customerId', '=', $customerId)
-            ->where('hours.validate', '=', $filter)
-            ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
-            ->where(function ($query) use ($request) {
-                $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                    ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-            })->distinct()->orderby('hours.register_start', 'desc')->offset($offset)->limit($limit)->get();
-
-            $exportTotal = Hours::join('rules', 'rules.userId', '=', 'hours.user_id')
-            ->join('users', 'users.id', '=', 'hours.user_id')
-            ->join('campaigns', 'campaigns.id', '=', 'hours.campaign_id')
-            ->select('users.name as user', 'campaigns.name as campaign', 'hours.*')
-            ->where('rules.customerId', '=', $customerId)
-            ->where('campaigns.customerId', '=', $customerId)
-            ->where('hours.validate', '=', $filter)
-            ->whereBetween('hours.register_start', [$firstDate->startOfDay(), $secondDate->endOfDay()])
-            ->where(function ($query) use ($request) {
-                $query->where('users.name', 'like', '%'.$request->keyword.'%')
-                    ->orWhere('campaigns.name', 'like', '%'.$request->keyword.'%');
-            })->distinct()->orderby('hours.register_start', 'desc')->get();
-
-        return ['hours' => $hours, 'exportTotal' => $exportTotal];
+            // Ejecutar consultas
+            return [
+                'hours' => (clone $hours)->offset($offset)->limit($limit)->get(),
+                'exportTotal' => $hours->get()
+            ];
 
     }
 
