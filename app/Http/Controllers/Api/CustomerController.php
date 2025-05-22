@@ -32,7 +32,7 @@ class CustomerController extends Controller
     {
         $customers = Customer::join('rules', 'customers.id', '=', 'rules.customerId')
         ->where('rules.userId', $userId) // Asegúrate de usar el nombre correcto de la columna
-        ->select('customers.*') // Selecciona las columnas de customers
+        ->select('customers.*', 'rules.*') // Selecciona las columnas de customers
         ->where('active', 1)
         ->get();
 
