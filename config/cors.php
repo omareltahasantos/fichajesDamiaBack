@@ -23,7 +23,8 @@ return [
     'https://fichajes-damia-front-5x5w6b09a-omareltahasantos-projects.vercel.app',
     'https://sistemasmedioambientalesfichajes.netlify.app',
     'http://localhost:3000',
-    'https://localhost:8000'
+    'https://localhost:8000',
+    'https://smnetsistemasmedioambientales.herokuapp.com',
 ],
 
     'allowed_origins_patterns' => [],
