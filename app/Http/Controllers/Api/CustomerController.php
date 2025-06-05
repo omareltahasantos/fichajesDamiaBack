@@ -23,7 +23,9 @@ class CustomerController extends Controller
 
     public function fetchAllCustomers()
     {
-        $customers = Customer::all();
+        $customers = Customer::orderBy('name', 'asc')
+            ->where('active', 1)
+            ->get();
 
         return $customers;
     }
