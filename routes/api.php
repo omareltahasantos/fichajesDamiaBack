@@ -41,6 +41,8 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/rolesUser', 'roles');
     Route::get('/countUsers', 'count');
     Route::get('/paginateUsers', 'paginate');
+    Route::put('/updateHoursContract/{dni}', 'updateHoursContract');
+
 
 });
 

@@ -143,6 +143,21 @@ class UserController extends Controller
 
     }
 
+   public function updateHoursContract(Request $request, $dni)
+    {
+        $user = User::where('dni', $dni)->first();
+
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        $user->hours_contract = $request->hours_contract;
+
+        $user->save();
+
+        return response()->json(['message' => 'Hours contract updated successfully', 'user_id' => $user->id]);
+    }
+
 
     public function destroy($id)
     {
