@@ -247,4 +247,22 @@ class UserController extends Controller
 
         return $users;
     }
+
+
+    public function updatePassword(Request $request, $dni)
+    {
+        $user = User::where('dni', $dni)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found']);
+        }
+
+        $user->password = $request->password;
+
+        $user->save();
+
+        return response()->json(['message' => 'Password updated successfully', 'user_id' => $user->id]);
+    }
+
+
 }
