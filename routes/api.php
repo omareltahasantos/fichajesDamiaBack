@@ -31,7 +31,6 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/fetchUsers', 'fetch');
     Route::get('/user', 'store');
     Route::get('/user/{id}', 'show');
-    Route::get('/user/findBy/{dni}', 'showByDni');
     Route::put('/user/{id}', 'update');
     Route::put('/user/state/{id}', 'updateState');
     Route::delete('/user/{id}', 'destroy');
@@ -41,12 +40,15 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/rolesUser', 'roles');
     Route::get('/countUsers', 'count');
     Route::get('/paginateUsers', 'paginate');
+});
+
+
+Route::middleware('api')->controller(UserController::class)->group(function () {
     Route::put('/updateHoursContract/{dni}', 'updateHoursContract');
     Route::put('/updatePassword/{dni}', 'updatePassword');
-
-
-
+    Route::get('/user/findBy/{dni}', 'showByDni');
 });
+
 
 Route::controller(CustomerController::class)->group(function(){
 
