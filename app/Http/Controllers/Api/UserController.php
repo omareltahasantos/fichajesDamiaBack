@@ -254,7 +254,7 @@ class UserController extends Controller
         $user = User::where('dni', $dni)->first();
 
         if (!$user) {
-            return response()->json(['message' => 'User not found']);
+            return response()->json(['error' => 'User not found'], 404);
         }
 
         $user->password = $request->password;

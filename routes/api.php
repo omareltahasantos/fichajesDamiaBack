@@ -42,7 +42,7 @@ Route::controller(UserController::class)->group(function(){
     Route::get('/countUsers', 'count');
     Route::get('/paginateUsers', 'paginate');
     Route::put('/updateHoursContract/{dni}', 'updateHoursContract');
-    Route::put('/user/updatePassword/{dni}', 'updatePassword');
+    Route::put('/updatePassword/{dni}', 'updatePassword');
 
 
 

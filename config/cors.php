@@ -15,7 +15,12 @@ return [
     |
     */
 
-    'paths' => ['api/*'],
+    'paths' => [
+        'api/*',
+        'updatePassword/*',
+        'updateHoursContract/*',
+        'user/*', // en caso de usar rutas con /user/
+    ],
 
     'allowed_methods' => ['*'],
 
